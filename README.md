@@ -110,7 +110,7 @@ Contributions are welcome! Please follow these steps:
 
 ## Acknowledgments
 - Special thanks to my mentors (Usman Bukhari and Hafsa Habib) for continuous support.
-- Special thanks to the Groq and Streamlit teams for their powerful APIs and tools.
+- Special thanks to the Langchain, Groq and Streamlit teams for their powerful APIs and tools.
 - Inspired by the need for practical, accessible interview preparation tools.
 
 ---
