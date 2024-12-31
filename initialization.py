@@ -216,7 +216,7 @@ def download_conversation_history():
 
         for turn in st.session_state["conversation_history"]:
             for speaker, message in turn.items():
-                conversation_data.append({"speaker": speaker, "message": message})
+                conversation_data.append({speaker : message})
 
         # Convert to JSON string
         conversation_json = json.dumps(conversation_data, indent=4)
