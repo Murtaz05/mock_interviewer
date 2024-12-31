@@ -10,7 +10,7 @@ AI Mock Interviewer is a web application designed to help job candidates prepare
 - **AI-Driven Questions**: Dynamically generate interview questions tailored to the job role and resume details.
 - **Real-Time Feedback**: Provide constructive feedback for candidate responses to improve performance.
 - **Audio Integration**: Convert questions and feedback into speech for an immersive experience.
-- **Conversation History**: Maintain a complete history of the interview for review and analysis.
+- **Conversation History**: Download a complete history of the interview for review and analysis.
 - **Resume Feedback**: Highlight strengths and areas for improvement in the candidate's resume.
 
 ---
@@ -68,13 +68,14 @@ AI Mock Interviewer is a web application designed to help job candidates prepare
    - Check the job details and their alignment with the resume.
 3. **Start Interview**:
    - Click the "Start Interview" button.
-   - Respond to questions via audio input.
+   - Respond to questions via audio input or via typing.
    - You can edit your response after recording
    - Receive feedback after you submit your response.
 4. **Review Session**:
    - Use the "Conversation History" section to review all questions, responses, and feedback.
 5. **Conclude**:
    - End the session and receive a motivational message.
+   - Option to download the conversation history.
 
 ---
 
@@ -110,6 +111,7 @@ Contributions are welcome! Please follow these steps:
 
 ## Acknowledgments
 - Special thanks to my mentors (Usman Bukhari and Hafsa Habib) for continuous support.
+- My team members Muhammad Usman, Usman Ahmed Khan, and Waqas Ishaq
 - Special thanks to the Langchain, Groq and Streamlit teams for their powerful APIs and tools.
 - Inspired by the need for practical, accessible interview preparation tools.
 
@@ -121,6 +123,8 @@ Contributions are welcome! Please follow these steps:
 - Add multi-language support for non-English speakers.
 - Include mock technical assessments alongside the interview process.
 - Enable integration with LinkedIn for automated profile analysis.
+- Enable integration with LinkedIn for automated JD analysis.
+
 
 ---
 

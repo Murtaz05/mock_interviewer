@@ -10,6 +10,8 @@ import tempfile
 import pygame
 from dotenv import load_dotenv
 import speech_recognition as sr
+import json
+
 
 if "conversation_history" not in st.session_state:
     st.session_state["conversation_history"] = []
@@ -35,8 +37,6 @@ if "question_asked" not in st.session_state:
 if "interview_concluded" not in st.session_state:
     st.session_state["interview_concluded"] = False
 
-if "new_question" not in st.session_state:
-    st.session_state["new_question"] = False
 
 # Load environment variables
 load_dotenv()
@@ -187,13 +187,53 @@ def get_user_response():
 
     # Text area for response input
     st.text_area(
-        "Edit your response here:",
+        "Write or Edit your response here:",
         st.session_state.get("temp_transcription",""),
         height=100,
         key="response_input",
     )
 
+def display_submitted_details():
+    # Display job and resume details
+    with st.expander("Job and Resume Details"):
+        st.write(f"**Job Role:** {st.session_state['job_role']}")
+        st.write("**Job Description:**")
+        st.write(st.session_state["job_description"])
+        st.write("**Resume Summary:**")
+        st.write(st.session_state["resume_summary"])
+    with st.expander("Resume Feedback"):
+        st.write(st.session_state["resume_feedback"])
+
+
+def download_conversation_history():
+    """
+    Downloads the conversation history stored in st.session_state["conversation_history"]
+    as a JSON file.
+    """
+    if "conversation_history" in st.session_state and st.session_state["conversation_history"]:
+        # Prepare the conversation history for download
+        conversation_data = []
+        for turn in st.session_state["conversation_history"]:
+            for speaker, message in turn.items():
+                conversation_data.append({"speaker": speaker, "message": message})
+
+        # Convert to JSON string
+        conversation_json = json.dumps(conversation_data, indent=4)
+
+        # Create a downloadable button
+        st.download_button(
+            label="Download Conversation History",
+            data=conversation_json,
+            file_name="conversation_history.json",
+            mime="application/json",
+        )
+    else:
+        st.warning("No conversation history available to download.")
+
+
+
 def conclude_interview():
     st.session_state["interview_concluded"] = True
 # Initialize the RunnableWithMessageHistory
 with_message_history = RunnableWithMessageHistory(model, get_session_history)
+
