@@ -93,6 +93,19 @@ def transcribe_audio():
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
+def get_user_response():
+    st.subheader("Your Response")
+    # Record response
+    if st.button("Record Your Response"):
+        transcribe_audio()
+    # Text area for response input
+    st.text_area(
+        "Write or Edit your response here:",
+        st.session_state.get("temp_transcription",""),
+        height=100,
+        key="response_input",
+    )
+
 def summarize_resume(text):
     """Summarize resume text using the Groq API."""
     summary_prompt = (
@@ -177,22 +190,6 @@ def ask_question(question):
         st.session_state["question_asked"] = True
     st.write(question)
 
-
-def get_user_response():
-    st.subheader("Your Response")
-
-    # Record response
-    if st.button("Record Your Response"):
-        transcribe_audio()
-
-    # Text area for response input
-    st.text_area(
-        "Write or Edit your response here:",
-        st.session_state.get("temp_transcription",""),
-        height=100,
-        key="response_input",
-    )
-
 def display_submitted_details():
     # Display job and resume details
     with st.expander("Job and Resume Details"):
@@ -212,7 +209,11 @@ def download_conversation_history():
     """
     if "conversation_history" in st.session_state and st.session_state["conversation_history"]:
         # Prepare the conversation history for download
-        conversation_data = []
+        conversation_data = [{"Job Role": st.session_state['job_role']},
+                             {"Job Description": st.session_state["job_description"]},
+                             {"Resume Extracted Content": st.session_state["resume_text"]},
+                             {"Resume Summary": st.session_state['resume_summary']}]
+
         for turn in st.session_state["conversation_history"]:
             for speaker, message in turn.items():
                 conversation_data.append({"speaker": speaker, "message": message})
@@ -229,7 +230,6 @@ def download_conversation_history():
         )
     else:
         st.warning("No conversation history available to download.")
-
 
 
 def conclude_interview():

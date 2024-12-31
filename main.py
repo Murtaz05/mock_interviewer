@@ -70,6 +70,7 @@ if st.session_state["interview_start"] and not st.session_state["interview_concl
                 for speaker, message in turn.items():
                     st.write(f"**{speaker}:** {message}")
 
+
     if st.button("End Interview"):
         conclude_interview()
         st.rerun()
@@ -77,3 +78,4 @@ if st.session_state["interview_start"] and not st.session_state["interview_concl
 if st.session_state["interview_concluded"]:
     st.header("Good Luck for Your Actual Interview")
     download_conversation_history()
+
