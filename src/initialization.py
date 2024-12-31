@@ -212,7 +212,8 @@ def download_conversation_history():
         conversation_data = [{"Job Role": st.session_state['job_role']},
                              {"Job Description": st.session_state["job_description"]},
                              {"Resume Extracted Content": st.session_state["resume_text"]},
-                             {"Resume Summary": st.session_state['resume_summary']}]
+                             {"Resume Summary": st.session_state['resume_summary']},
+                             {"Resume Feedback": st.session_state['resume_feedback']}]
 
         for turn in st.session_state["conversation_history"]:
             for speaker, message in turn.items():
