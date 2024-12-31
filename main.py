@@ -14,7 +14,6 @@ if not st.session_state["interview_start"]:
         resume_text = extract_text_from_pdf(st.session_state["resume_pdf"])
         st.session_state["resume_text"] = resume_text
 
-
     if st.sidebar.button("Submit Details") or st.session_state["details_submitted"] :
         if all(key in st.session_state for key in ["job_role", "job_description", "resume_text"]):
             st.session_state["details_submitted"] = True
