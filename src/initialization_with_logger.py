@@ -1,3 +1,4 @@
+import logging
 from gtts import gTTS
 import os
 import streamlit as st
@@ -11,41 +12,63 @@ import pygame
 from dotenv import load_dotenv
 import speech_recognition as sr
 import json
+from logging_config import setup_logging
 
+# Setup logging
+logger = setup_logging("initialization.log")
+
+# Initialize session state
+logger.info("Initializing session state variables...")
 
 if "conversation_history" not in st.session_state:
     st.session_state["conversation_history"] = []
+    logger.debug("Session state 'conversation_history' initialized.")
+
 
 if "response_input" not in st.session_state:
     st.session_state["response_input"] = ""
+    logger.debug("Session state 'response_input' initialized.")
 
 if "current_question" not in st.session_state:
     st.session_state["current_question"] = ""
+    logger.debug("Session state 'current_question' initialized.")
 
 if "interview_start" not in st.session_state:
     st.session_state["interview_start"] = False
+    logger.debug("Session state 'interview_start' initialized.")
 
 if "details_submitted" not in st.session_state:
     st.session_state["details_submitted"] = False
+    logger.debug("Session state 'details_submitted' initialized.")
+
 
 if "response_received" not in st.session_state:
     st.session_state["response_received"] = False
+    logger.debug("Session state 'response_received' initialized.")
 
 if "question_asked" not in st.session_state:
     st.session_state["question_asked"] = False
+    logger.debug("Session state 'question_asked' initialized.")
 
 if "interview_concluded" not in st.session_state:
     st.session_state["interview_concluded"] = False
+    logger.debug("Session state 'interview_concluded' initialized.")
 
 
 # Load environment variables
 load_dotenv()
+logger.info("Environment variables loaded.")
 
 # API keys from .env file
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if GROQ_API_KEY:
+    logger.info("GROQ_API_KEY loaded successfully.")
+else:
+    logger.warning("GROQ_API_KEY not found in environment variables.")
 
 # Initialize the Groq model
 model = ChatGroq(model="llama3-8b-8192")
+logger.info("ChatGroq model initialized successfully.")
 
 # Chat history storage
 store = {}
@@ -53,10 +76,12 @@ session_id = "single_user_session"
 
 # Initialize audio recognizer
 recognizer = sr.Recognizer()
+logger.info("Speech recognizer initialized.")
 
 def get_session_history(session_id: str):
     """Retrieve or create chat history for a session."""
     if session_id not in store:
+        logger.info(f"No existing chat history for session_id: {session_id}. Creating new history.")
         store[session_id] = InMemoryChatMessageHistory()
     return store[session_id]
 
@@ -74,6 +99,7 @@ def play_text_as_audio(text):
     pygame.mixer.init()
     pygame.mixer.music.load(temp_audio_path)
     pygame.mixer.music.play()
+    logger.info("Text-to-speech audio played successfully.")
 
 def transcribe_audio():
     """Transcribe speech to text using a microphone."""
@@ -92,6 +118,8 @@ def transcribe_audio():
         st.error("Could not understand the audio.")
     except Exception as e:
         st.error(f"An error occurred: {e}")
+        logger.info("Audio transcription completed successfully.")
+
 
 def get_user_response():
     st.subheader("Your Response")
@@ -105,6 +133,7 @@ def get_user_response():
         height=100,
         key="response_input",
     )
+    logger.info("AI model response received successfully.")
 
 def summarize_resume(text):
     """Summarize resume text using the Groq API."""
@@ -116,6 +145,8 @@ def summarize_resume(text):
         [HumanMessage(content=summary_prompt)],
         config={"configurable": {"session_id": "resume_summary"}},
     )
+    logger.info("Resume summary generated successfully.")
+
     return response.content
 
 def get_model_response(prompt):
@@ -135,6 +166,8 @@ def resume_feedback(resume_summary, job_role, jd):
         [HumanMessage(content=prompt)],
         config={"configurable": {"session_id": session_id}},
     ).content
+    logger.info("Feedback for user response generated successfully.")
+
     # Call the AI model to get feedback
     return response
 
@@ -150,6 +183,8 @@ def get_first_question():
         """
     )
     st.session_state["current_question"] = get_model_response(prompt)
+    logger.info("First question generated successfully.")
+
 
 def get_next_question():
     prompt = (
@@ -157,6 +192,7 @@ def get_next_question():
         Please ask next question, it could be based on previous response or any new question.
         """)
     st.session_state["current_question"] = get_model_response(prompt)
+    logger.info("Next question generated successfully.")
 
 # def get_question(is_first_question=False):
 #     prompt = (
@@ -177,17 +213,21 @@ def get_response_feedback(user_response):
         f"Response: {user_response}\n\n"
         f"Provide constructive feedback in 2 sentences."
     )
-    # Call the AI model to get feedback
-    return get_model_response(prompt)
+    feeback=get_model_response(prompt)
+    logger.info("Feedback generated successfully.")
+
+    return feeback
 
 def update_conversation_history_st(speaker, message):
     """Update the conversation history."""
     st.session_state["conversation_history"].append({speaker: message})
+    logger.info("Conversation history updated successfully")
 
 def ask_question(question):
     if not st.session_state["question_asked"]:
         play_text_as_audio(question)
         st.session_state["question_asked"] = True
+        logger.info("Question played as audio successfully.")
     st.write(question)
 
 def display_submitted_details():
@@ -199,6 +239,7 @@ def display_submitted_details():
         st.write("**Resume Summary:**")
         st.write(st.session_state["resume_summary"])
     with st.expander("Resume Feedback"):
+        logger.info("Job and resume details displayed successfully.")
         st.write(st.session_state["resume_feedback"])
 
 
@@ -229,12 +270,15 @@ def download_conversation_history():
             file_name="conversation_history.json",
             mime="application/json",
         )
+        logger.info("Conversation history download button displayed successfully.")
     else:
         st.warning("No conversation history available to download.")
 
 
 def conclude_interview():
     st.session_state["interview_concluded"] = True
+    logger.info("Interview concluded successfully.")
 # Initialize the RunnableWithMessageHistory
 with_message_history = RunnableWithMessageHistory(model, get_session_history)
+logger.info("RunnableWithMessageHistory initialized successfully.")
 

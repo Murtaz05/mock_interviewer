@@ -1,4 +1,4 @@
-from initialization import *
+from initialization_with_logger import *
 
 
 # Streamlit app setup
